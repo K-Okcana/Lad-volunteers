@@ -5,6 +5,9 @@
 
 На проекте принимала участие в роли QA Lead инженера.
 
+## Сертификат Академия Лад
+[Certificate](Certificate_Volunteers.pdf)
+
 ## Майнд карта, схемы состояний и переходов
 [Mindmap](https://miro.com/app/board/uXjVNIl8ADg=/?share_link_id=430296267962)
 
