@@ -23,3 +23,13 @@
 [Список заведенных на проекте баг-репортов](bugreports/bugreports-list.png)
 
 [Примеры баг-репортов](bugreports/)
+
+## TMS Qase
+[Структура репозитория](Qase/VOLUNTEER_Repository_Qase.png)
+
+[Тестовый прогон 1](Qase/Test_runs_Qase_1.png)
+
+[Тестовый прогон 2](Qase/Test_runs_Qase_2.png)
+
+[Тест-кейсы](Qase/Test-case/)
+
