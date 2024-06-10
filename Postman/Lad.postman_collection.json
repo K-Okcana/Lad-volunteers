@@ -1,0 +1,1226 @@
+{
+	"info": {
+		"_postman_id": "155eb0c1-19a9-4c59-bca5-355d8311762b",
+		"name": "Lad",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28249474"
+	},
+	"item": [
+		{
+			"name": "Главная страница",
+			"item": [
+				{
+					"name": "Получение данных для главной страницы",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}",
+							"host": [
+								"{{url-volunteers}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Города",
+			"item": [
+				{
+					"name": "Поиск города",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"console.log(\"test script for post request\");\r",
+									"pm.collectionVariables.set(\"city\", pm.response.json()[0].id);\r",
+									"console.log(pm.response.json()[0].id);\r",
+									"pm.collectionVariables.get(\"city\")"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/cities/:cityName",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"cities",
+								":cityName"
+							],
+							"variable": [
+								{
+									"key": "cityName",
+									"value": "Томск"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Авторизация",
+			"item": [
+				{
+					"name": "Авторизация пользователя",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code ===201){\r",
+									"    console.log (\"Пользователь авторизован\");\r",
+									"} else if (pm.response.code ===401){\r",
+									"    console.log (\"Некоректный email или пароль\");\r",
+									"} else if (pm.response.code ===404){\r",
+									"    console.log (\"Пользователь с таким email не существует\");\r",
+									"} else if (pm.response.code ===500){\r",
+									"    console.log (\"Что то пошло не так\");\r",
+									"} else {\r",
+									"    console.log (\"Код \" + pm.response.code + \"не задокументирован\");\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"refreshToken\", pm.cookies.get('refreshToken'));"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"Asd123*\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/login",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Регистрация волонтера (подстановка данных из файла)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is from table\", function () {\r",
+									"    pm.response.to.have.status(data[\"HTTPcode\"]);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if (data[\"email\"] === \"randomEmail\") {\r",
+									"    pm.collectionVariables.set(\"variable_key\", pm.variables.replaceIn('{{$randomFirstName}}'));\r",
+									"    console.log(\"random email=\", pm.collectionVariables.get(\"variable_key\"));\r",
+									"} else {\r",
+									"    pm.collectionVariables.set(\"variable_key\", data[\"email\"]);\r",
+									"    console.log(\"variable_key=\", pm.collectionVariables.get(\"variable_key\"));\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"{{name}}\",\r\n    \"surname\": \"{{surname}}\",\r\n    \"sex\": \"{{sex}}\",\r\n    \"birthday\": \"{{birthday}}\",\r\n    \"phone\": \"{{phone}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"city\": \"{{city}}\",\r\n    \"password\": \"{{password}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/registration",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"registration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Регистрация волонтера",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"if (pm.response.code ===201){",
+									"console.log (\"Новый пользователь зарегистрирован\")",
+									"var response = pm.response.json();",
+									"pm.collectionVariables.set(\"email\", response.email);",
+									"console.log(\"email: \" + response.email);",
+									"pm.collectionVariables.set(\"volunteerId\", response.id);",
+									"console.log(\"volunteerId: \" + response.id);",
+									"",
+									"",
+									"pm.test(\"Validate specific fields\", function () {",
+									"    pm.expect(response.name).to.eql(\"Витя\");",
+									"    pm.expect(response.surname).to.eql(\"ТестТест\");",
+									"    pm.expect(response.sex).to.eql(\"male\");",
+									"    pm.expect(response.birthday).to.eql(\"2006-01-01T12:00:00.000Z\");",
+									"    pm.expect(response.phone).to.eql(\"9089997988\");",
+									"});",
+									"",
+									"var schema = {",
+									"  \"type\": \"object\",",
+									"  \"properties\": {",
+									"    \"id\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"name\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"surname\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"sex\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"birthday\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"phone\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"email\": {",
+									"      \"type\": [\"string\"]",
+									"    },",
+									"    \"city\": {",
+									"      \"type\": [\"object\"],",
+									"      \"properties\": {",
+									"        \"id\": {",
+									"          \"type\": [\"string\"]",
+									"        },",
+									"        \"coord\": {",
+									"          \"type\": [\"object\", \"null\"],",
+									"          \"properties\": {",
+									"            \"lat\": {",
+									"              \"type\": [\"string\", \"null\"]",
+									"            },",
+									"            \"lon\": {",
+									"              \"type\": [\"string\", \"null\"]",
+									"            }",
+									"          },",
+									"          \"required\": [",
+									"            \"lat\",",
+									"            \"lon\"",
+									"          ]",
+									"        },",
+									"        \"cityName\": {",
+									"          \"type\": [\"string\"]",
+									"        },",
+									"        \"subject\": {",
+									"          \"type\": [\"string\", \"null\"]",
+									"        },",
+									"        \"nameAndSubject\": {",
+									"          \"type\": [\"string\", \"null\"]",
+									"        },",
+									"        \"createdAt\": {",
+									"          \"type\": [\"string\", \"null\"]",
+									"        },",
+									"        \"updatedAt\": {",
+									"          \"type\": [\"string\", \"null\"]",
+									"        }",
+									"      },",
+									"      \"required\": [",
+									"        \"id\",",
+									"        \"coord\",",
+									"        \"cityName\",",
+									"        \"subject\",",
+									"        \"nameAndSubject\",",
+									"        \"createdAt\",",
+									"        \"updatedAt\"",
+									"      ]",
+									"    },",
+									"    \"level\": {",
+									"      \"type\": [\"string\", \"null\"]",
+									"    },",
+									"    \"seasonKarma\": {",
+									"      \"type\": [\"integer\", \"null\"]",
+									"    },",
+									"    \"totalKarma\": {",
+									"      \"type\": [\"integer\", \"null\"]",
+									"    },",
+									"    \"totalEvents\": {",
+									"      \"type\": [\"integer\", \"null\"]",
+									"    },",
+									"    \"createdAt\": {",
+									"      \"type\": [\"string\", \"null\"]",
+									"    }",
+									"  },",
+									"  \"required\": [",
+									"    \"id\",",
+									"    \"name\",",
+									"    \"surname\",",
+									"    \"sex\",",
+									"    \"birthday\",",
+									"    \"phone\",",
+									"    \"email\",",
+									"    \"city\",",
+									"    \"level\",",
+									"    \"seasonKarma\",",
+									"    \"totalKarma\",",
+									"    \"totalEvents\",",
+									"    \"createdAt\"",
+									"  ]",
+									"}",
+									"",
+									"var result = tv4.validateMultiple(response, schema, true, true);",
+									"if (result.valid) {",
+									"    pm.test('Все поля корректны', setTestStatus);",
+									"} else {",
+									"    for (var i = 0; i < result.errors.length; i++) {",
+									"        pm.test('Ошибка в поле: ' + result.errors[i].dataPath + ' ' + result.errors[i].message, setTestStatus);",
+									"    }",
+									"}",
+									"function setTestStatus() {",
+									"    pm.expect(result.valid).to.be.true;",
+									"}",
+									"} else if (pm.response.code ===406){",
+									"    console.log (\"The following fields are invalid: ...\");",
+									"} else if (pm.response.code ===409){",
+									"    console.log (\"Пользователь с таким email уже существует\");",
+									"} else if (pm.response.code ===500){",
+									"    console.log (\"Что то пошло не так\");",
+									"} else {",
+									"    console.log (\"Код \" + pm.response.code + \"не задокументирован\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Витя\",\r\n    \"surname\": \"ТестТест\",\r\n    \"sex\": \"male\",\r\n    \"birthday\": \"2006-01-01T12:00:00.000Z\",\r\n    \"phone\": \"9089997988\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"city\": \"{{city}}\",\r\n    \"password\": \"Asd123*\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/registration",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"registration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновление токена",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "refreshToken={{refreshToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/refresh",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Выход из учетной записи",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/logout",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Подтверждение почты",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200){\r",
+									"    console.log (\"Почта успешно подтверждена\");\r",
+									"} else if (pm.response.code === 401){\r",
+									"    console.log (\"Пользователь не авторизован\");\r",
+									"} else if (pm.response.code === 403){\r",
+									"    console.log (\"Время жизни кода активации истекло\");\r",
+									"} else if (pm.response.code === 404){\r",
+									"    console.log (\"Пользователь с таким кодом активации не найден\");\r",
+									"} else (pm.response.code === 500){\r",
+									"    console.log (\"Что то пошло не так\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtvYnpldmFfb25AYmsucnUiLCJpZCI6IjY2MGFjYmE2NDU1Y2IzMDM0ZTQ2N2Q1MiIsImlhdCI6MTcxMjIyNzM2NSwiZXhwIjoxNzEyMzEzNzY1fQ.FOzqYAlYQIq4ehoBwDc2TU2wubrtkLd4hb2_cmgJPdw%3B%20Path%3D%2F%3B%20HttpOnly%3B%20Secure%3B%20SameSite%3DNone"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"code\": \"3B3F2F6E\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/confirm-email",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"confirm-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Смена пароля",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const getTokenRequest = {\r",
+									"  method: 'POST',\r",
+									"  url: pm.environment.get(\"url-volunteers\")+\"/volunteer/auth/login\",\r",
+									"  header: 'Content-Type:application/json',\r",
+									"  header: 'Accept:application/json',\r",
+									"  body: '{ \"email\": \"'+pm.collectionVariables.get(\"email\")+'\",  \"password\": \"Asd123*\"}'\r",
+									"  };\r",
+									"\r",
+									"pm.sendRequest(getTokenRequest, (err, response) => {\r",
+									"  const jsonResponse = response.json();\r",
+									"  const newAccessToken = jsonResponse.access_token;\r",
+									"  pm.variables.set('Access_Token', newAccessToken);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"newPassword\": \"Asd123**\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/auth/password/:id/:token",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"auth",
+								"password",
+								":id",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6617dc1b86912945934fc8b6"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im9uX2tvYnpldmFAbWFpbC5ydSIsImlkIjoiNjYxN2RjMWI4NjkxMjk0NTkzNGZjOGI2IiwiaWF0IjoxNzEyODM5OTA5LCJleHAiOjE3MTI4NDA4MDl9.P7GvNxTPNPibPpKUU-uANUJZMn7ofEO6x7y03DXBZ8w"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Волонтеры",
+			"item": [
+				{
+					"name": "Получение личных данных пользователя",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"if (pm.response.code === 200){\r",
+									"    console.log (\"Status code is 200\");\r",
+									"} else if (pm.response.code === 401){\r",
+									"    console.log (\"Пользователь не авторизован\");\r",
+									"} else if (pm.response.code === 403){\r",
+									"    console.log (\"Forbidden\");\r",
+									"} if (pm.response.code === 500){\r",
+									"    console.log (\"Что то пошло не так\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Изменение личных данных волонтера",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Validate specific fields\", function () {",
+									"    var response = pm.response.json();",
+									"    pm.expect(response.name).to.eql(\"Виктор\");",
+									"    pm.expect(response.surname).to.eql(\"Петров\");",
+									"    pm.expect(response.patronymic).to.eql(\"Иванович\");",
+									"    pm.expect(response.sex).to.eql(\"male\");",
+									"    pm.expect(response.birthday).to.eql(\"2007-12-12T12:00:00.000Z\");",
+									"    pm.expect(response.phone).to.eql(\"9999988999\");",
+									"    pm.expect(response.city.id).to.eql(\"6605769573540d1ea425fd1c\");",
+									"    pm.expect(response.cityDistrict).to.eql(\"Канавинский\");",
+									"    pm.expect(response.vk).to.eql(\"@viktor_vk\");",
+									"    pm.expect(response.telegram).to.eql(\"@viktor_tg\");",
+									"    pm.expect(response.healthRestrictions).to.eql(\"Остутсвуют\");",
+									"    pm.expect(response.volunteerExperienceDescription).to.eql(\"5 лет учавствовал в волонтерстве\");",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Виктор\",\r\n  \"surname\": \"Петров\",\r\n  \"patronymic\": \"Иванович\",\r\n  \"sex\": \"male\",\r\n  \"birthday\": \"2007-12-12T12:00:00.000Z\",\r\n  \"phone\": \"9999988999\",\r\n  \"city\": \"6605769573540d1ea425fd1c\",\r\n  \"cityDistrict\": \"Канавинский\",\r\n  \"vk\": \"@viktor_vk\",\r\n  \"telegram\": \"@viktor_tg\",\r\n  \"healthRestrictions\": \"Остутсвуют\",\r\n  \"volunteerExperienceDescription\": \"5 лет учавствовал в волонтерстве\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/:volunteerId",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								":volunteerId"
+							],
+							"variable": [
+								{
+									"key": "volunteerId",
+									"value": "{{volunteerId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отправка письма для подтверждения почты",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200){\r",
+									"    console.log (\"Письмо для подтверждения почты успешно отправлено\");\r",
+									"} else if (pm.response.code === 400){\r",
+									"    console.log (\"Неверный адрес электронной почты\");\r",
+									"} else if (pm.response.code === 401){\r",
+									"    console.log (\"Unauthorized\");\r",
+									"} else if (pm.response.code === 403){\r",
+									"    console.log (\"Access token was expired\");\r",
+									"} else if (pm.response.code === 409){\r",
+									"    console.log (\"Почта уже подтверждена | Пользователь с таким email уже существует\");\r",
+									"} else if (pm.response.code === 429){\r",
+									"    console.log (\"Для следующего письма подождите одну минуту\");\r",
+									"} if (pm.response.code === 500){\r",
+									"    console.log (\"Ошибка при отправке письма: [error message]\");\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtvYnpldmFfb25AYmsucnUiLCJpZCI6IjY2MGFjYmE2NDU1Y2IzMDM0ZTQ2N2Q1MiIsImlhdCI6MTcxMjIyNzM2NSwiZXhwIjoxNzEyMzEzNzY1fQ.FOzqYAlYQIq4ehoBwDc2TU2wubrtkLd4hb2_cmgJPdw%3B%20Path%3D%2F%3B%20HttpOnly%3B%20Secure%3B%20SameSite%3DNone"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"to\": \"viktor@mailna.me\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/activate",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"activate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отправка письма для смены пароля",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"to\": \"rubie_bosco37@gmail.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/volunteer/reset-password",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"volunteer",
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Мероприятия",
+			"item": [
+				{
+					"name": "Список мероприятий",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"var template = `",
+									"<style type=\"text/css\">",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+									"    .tftable tr {background-color:#ffffff;}",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+									"    .tftable tr:hover {background-color:#e0ffff;}",
+									"</style>",
+									"",
+									"<table class=\"tftable\" border=\"1\">",
+									"    <tr>",
+									"        <th>Title</th>",
+									"        <th>Start Application Submission Date</th>",
+									"        <th>End Application Submission Date</th>",
+									"        <th>City Name</th>",
+									"        <th>Status</th>",
+									"    </tr>",
+									"    ",
+									"    {{#each response.sortedEvents}}",
+									"    {{#each events}}",
+									"        <tr>",
+									"            <td>{{title}}</td>",
+									"            <td>{{startApplicationSubmissionDateTime}}</td>",
+									"            <td>{{endApplicationSubmissionDateTime}}</td>",
+									"            <td>{{titleBlock.city.cityName}}</td>",
+									"            <td>{{status}}</td>",
+									"        </tr>",
+									"    {{/each}}",
+									"    {{/each}}",
+									"</table>",
+									"`;",
+									"",
+									"function constructVisualizerPayload() {",
+									"    return { response: pm.response.json() }",
+									"}",
+									"",
+									"pm.visualizer.set(template, constructVisualizerPayload());",
+									"",
+									"",
+									"console.log(\"test script for post request\");",
+									"pm.collectionVariables.set(\"eventId\", pm.response.json().sortedEvents[0].events[0].id);",
+									"console.log(pm.collectionVariables.get(\"eventId\"));",
+									"pm.collectionVariables.get(\"eventId\");",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/events",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение данных по конкретному мероприятию",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/events/{{eventId}}",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"events",
+								"{{eventId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Заявки на мероприятия",
+			"item": [
+				{
+					"name": "Подать заявку на мероприятие",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"coveringLetter\": \"Я хочу учавствовать, потому что хочу быть полезным\",\r\n  \"eventId\": \"6605769573540d1ea425fd34\",\r\n  \"volunteer\": {\r\n    \"name\": \"Виктор\",\r\n    \"surname\": \"Петров\",\r\n    \"patronymic\": \"Иванович\",\r\n    \"sex\": \"male\",\r\n    \"birthday\": \"2007-12-12T12:00:00.000Z\",\r\n    \"phone\": \"9999999999\",\r\n    \"city\": \"6605769573540d1ea425fd1c\",\r\n    \"cityDistrict\": \"Канавинский\",\r\n    \"vk\": \"@viktor_vk\",\r\n    \"telegram\": \"@viktor_tg\"\r\n  }\r\n}"
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/event-requests",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"event-requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Заявки на мероприятия, которые отправил волонтер",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{url-volunteers}}/event-requests",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"event-requests"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Отменить заявку на участие в мероприятие",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/event-requests/:eventId",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"event-requests",
+								":eventId"
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "6605769573540d1ea425fd34",
+									"description": "id мероприятия"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Все заявки на выбранное мероприятие",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url-volunteers}}/event-requests/:eventId",
+							"host": [
+								"{{url-volunteers}}"
+							],
+							"path": [
+								"event-requests",
+								":eventId"
+							],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "660b9ff9455cb3034e470c2d",
+									"description": "id мероприятия"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "city",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "volunteerId",
+			"value": ""
+		},
+		{
+			"key": "eventId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": ""
+		}
+	]
+}

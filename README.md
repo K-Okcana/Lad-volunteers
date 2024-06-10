@@ -33,3 +33,6 @@
 
 [Тест-кейсы](Qase/Test-case/)
 
+## Tестирование beckend
+
+[Коллекция Postman](Postman)

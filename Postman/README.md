@@ -1,0 +1,1 @@
+# Коллекция PostmanКоллекция для тестирования backend web приложения Волонтерыфайл [volunteer_registration_data.csv](volunteer_registration_data.csv) содержит набор тестовых данных для регистрации волонтера
